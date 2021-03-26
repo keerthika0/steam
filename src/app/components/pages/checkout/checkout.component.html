@@ -1,0 +1,641 @@
+<app-header #myChild></app-header>
+
+<div class="checkout main-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class=" col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="have-coupon cursor-pointer">
+                    <i class="fa fa-user"></i>
+                    <p>{{"HaveCoupon"|translate}}</p>
+                </div>
+                <div class="hide-coupon" style="display: none;">
+                    <p>{{"ApplyCoupon"|translate}}</p>
+                    <form class="apply-coupon">
+                        <nz-form-item>
+                            <nz-form-control nzErrorTip="{{'inputcoupon' | translate}}!">
+                                <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixCoupon">
+                                    <input type="text" #coupon_code nz-input placeholder="{{'EnterCoupon'|translate}}"
+                                        [ngModel]="couponCode" [ngModelOptions]="{standalone: true}" />
+                                </nz-input-group>
+                                <ng-template #suffixCoupon>
+                                    <button nz-button nzType="primary" nzSize="large" *ngIf="!couponapplied"
+                                        (click)="checkCoupon(coupon_code.value)">{{"SubmitCoupon"|translate}}</button>
+                                    <button nz-button nzType="primary" *ngIf="couponapplied" nzSize="large"
+                                        (click)=" deleteCoupon()">{{"RemoveCoupon"|translate}}</button>
+                                </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="hr-theme-slash-2">
+            <div class="hr-line"></div>
+            <div class="hr-icon"><i class="fa fa-credit-card"></i></div>
+            <div class="hr-line"></div>
+        </div>
+        <div class="row pt-10">
+            <div class="col-lg-7 col-md-6 col-sm-12 col-xs-12">
+                <div class="delivery-address">
+                    <div class="select-address display-flex">
+                        <div class="left-select-address display-flex">
+                            <i class="fa fa-map-marker"></i>
+                            <h4>{{"SelectAddress"|translate}}</h4>
+                        </div>
+                        <button nz-button nzSize="large" nzType="primary" class="text-capitalize"
+                            *ngIf="addressList.length > 0">
+                            {{"Select"|translate | lowercase}}
+                        </button>
+                        <button nz-button nzSize="large" nzType="primary" class="text-capitalize"
+                            *ngIf="addressList.length == 0">
+                            {{"AddAddress"|translate | lowercase}}
+                        </button>
+                    </div>
+                </div>
+                <div class="hide-delivery-address" style="display: none;">
+                    <div class="hide-address display-flex" *ngFor="let address of addressList">
+                        <nz-radio-group [(ngModel)]="addressSelect">
+                            <label nz-radio [nzValue]="address._id" (click)="selectAddressforPayment(address)">
+                                <div class="hide-default">
+                                    <div class="hide-default-name display-flex">
+                                        <h5 class="mb-0">{{address.user_name}}</h5>
+                                        <nz-tag [nzColor]="'#8f8f8f'">{{address.address_type}}</nz-tag>
+                                    </div>
+                                    <p>{{address.address}}</p>
+                                    <p>{{"Mobile"|translate}}: <span>{{address.mobile}}</span></p>
+                                    <div class="hide-button">
+                                        <!-- <button nz-button nzType="default" type="submit" class="form__button"
+                                            nz-popconfirm nzPopconfirmTitle="Are you sure remove this address?"
+                                            nzPopconfirmPlacement="bottom"
+                                            (nzOnConfirm)="deleteAddress(address._id)">Remove</button> -->
+                                        <button nz-button [nzType]="'primary'"
+                                            (click)="editshowModal(address,address._id)"><span>{{"Edit"|translate}}</span></button>
+                                    </div>
+                                </div>
+                            </label>
+                        </nz-radio-group>
+                    </div>
+                    <div class="hide-add-address cursor-pointer" (click)="addshowModal()">
+                        + {{"AddNewAdd"|translate}}
+                    </div>
+                </div>
+                <div class="payment-option">
+                    <div class="payment-methods display-flex">
+                        <div class="left-payment display-flex">
+                            <i class="fa fa-credit-card"></i>
+                            <h4>{{"PaymentOption"|translate}}</h4>
+                        </div>
+                        <div class="right-payment" *ngIf="cardList.length > 0">
+                            {{"Choose"|translate}}
+                        </div>
+                        <button nz-button nzSize="large" nzType='primary' class="text-capitalize"
+                            *ngIf="cardList.length == 0">
+                            {{"AddCard"|translate | lowercase}}
+                        </button>
+                    </div>
+                </div>
+                <div class="hide-payment-option" style="display: none;">
+                    <nz-radio-group [(ngModel)]="payMethod" class="payment-option-list">
+                        <label nz-radio nzValue="CARD" (click)="addCard()"
+                            *ngIf="settingData?.payment_method_stripe == 'true' || settingData?.payment_method_stripe"><img
+                                src="../../../assets/images/card.png" style="width: 18%;"
+                                *ngIf="settingData?.payment_method_paypal == 'false' || settingData?.payment_method_paypal == false">
+                            <img src="../../../assets/images/card.png"
+                                *ngIf="settingData?.payment_method_paypal == 'true' || settingData?.payment_method_paypal"></label>
+                        <label nz-radio nzValue="PAYPAL"
+                            *ngIf="settingData?.payment_method_paypal == 'true' || settingData?.payment_method_paypal"><img
+                                src="../../../assets/images/paypal.png" class="img20"></label>
+                    </nz-radio-group>
+                    <!-- <div *ngIf="payMethod == 'CARD' ">
+                        <div class="card-payment">
+                            <nz-radio-group [(ngModel)]="cardPayment">
+                                <label nz-radio [nzValue]="card._id" *ngFor="let card of cardList"
+                                    (click)="selectCardforPayment(card._id)">
+                                    <div class="card-list-item">
+                                        <div class="card-detail">
+                                            <div class="card-icon">
+                                                <i class="fa fa-credit-card"></i>
+                                            </div>
+                                            <div class="card-holder">
+                                                <h6>{{card.brand}}</h6>
+                                                <h6>{{'Expiry'|translate}}: {{card.month}}/{{card.year}}</h6>
+                                                <p class="mb-0">
+                                                    <span>XXXX</span>&nbsp;<span>XXXX</span>&nbsp;<span>XXXX</span>&nbsp;<span>{{card.number}}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </nz-radio-group>
+                        </div>
+                        <div class="hide-add-card cursor-pointer" (click)="addCard()">
+                            + {{'AddCard'|translate}}
+                        </div>
+                    </div> -->
+                </div>
+                <!-- Delivery Option (start) -->
+                <div class="delivery-option">
+                    <div class="checkout-card">
+                        <div class="display-flex card-title">
+                            <i class="fa fa-truck card-icon"></i>
+                            <h4>{{"DeliverOption"|translate}}</h4>
+                        </div>
+                        <div>
+                            <button nz-button nzType="primary" nzSize="large">{{"Choose"|translate}}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hide-delivery-option" style="display: none;">
+                    <nz-radio-group [(ngModel)]="deliValue" (ngModelChange)="cartAll()">
+                        <label nz-radio nzValue="NORMAL">
+                            <div class="delivery-details">
+                                <div class="d-flex">
+                                    <div class="delivery-express-logo">
+                                        <img src="../../../../assets/images/svg/delivery-truck.svg" alt="delivery"
+                                            draggable="false" height="36">
+                                    </div>
+                                    <div class="delivery-express-name">
+                                        <h6 class="mb-1">{{"Normal"|translate}}</h6>
+                                        <p class="text-muted mb-0">{{"DaysDeliverNormal"|translate}}</p>
+                                    </div>
+                                </div>
+                                <div class="delivery-express-price"
+                                    *ngIf="deliveryFee?.order_price > totalAmount || deliveryFee?.order_price == totalAmount">
+                                    <strong>{{deliveryFee.delivery_fee_below_min}}€</strong>
+                                </div>
+                                <div class="delivery-express-price" *ngIf="deliveryFee?.order_price < totalAmount">
+                                    <strong>{{deliveryFee.delivery_fee_above_min}}€</strong>
+                                </div>
+                            </div>
+                        </label>
+                        <label nz-radio nzValue="EXPRESS">
+                            <div class="delivery-details">
+                                <div class="d-flex">
+                                    <div class="delivery-express-logo">
+                                        <img src="../../../../assets/images/svg/delivery-truck.svg" alt="delivery"
+                                            draggable="false" height="36">
+                                    </div>
+                                    <div class="delivery-express-name">
+                                        <h6 class="mb-1">{{"Express"|translate}}</h6>
+                                        <p class="text-muted mb-0">{{"DaysDeliverExpress"|translate}}</p>
+                                    </div>
+                                </div>
+                                <div class="delivery-express-price" *ngIf="deliveryFee?.order_price < totalAmount">
+                                    <strong>{{deliveryFee.delivery_fee_above_max}}€</strong>
+                                </div>
+                                <div class="delivery-express-price"
+                                    *ngIf="deliveryFee?.order_price > totalAmount || deliveryFee?.order_price == totalAmount">
+                                    <strong>{{deliveryFee.delivery_fee_below_max}}€</strong>
+                                </div>
+                            </div>
+                        </label>
+                    </nz-radio-group>
+                </div>
+                <!-- Delivery Option (end) -->
+            </div>
+            <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12">
+                <div class="price-details">
+                    <h4>{{"PriceDetail"|translate}}</h4>
+                    <div class="price-card-details">
+                        <div class="product-content-list display-flex">
+                            <p class="w-70 pl-1">{{"BagTotal"|translate}} ({{cartList.length}} items)</p>
+                            <p>{{totalAmount |number:'1.1-2'}}€</p>
+                        </div>
+                        <div class="product-content-list display-flex" *ngIf="totalAmount > 0">
+                            <p class="w-70 pl-1">{{"DeliveryCharge"|translate}}</p>
+                            <p *ngIf="delivery_fee != 0">{{delivery_fee}}€</p>
+                            <p *ngIf="delivery_fee == 0" class="text-sucess">{{"FREE"|translate}}</p>
+                        </div>
+                        <div class="product-content-list display-flex" *ngIf="couponapplied">
+                            <p class="w-70 pl-1">{{"CouponApplied"|translate}}</p>
+                            <p>- {{coupon_discount}}€</p>
+                        </div>
+                        <div class="sub-total display-flex">
+                            <h5 class="w-70 pl-1">{{"TotalPayable"|translate}}</h5>
+                            <h5 *ngIf="totalAmount > 0">{{(totalAmount+delivery_fee-coupon_discount)|number:'1.1-2'}}€
+                            </h5>
+                            <h5 *ngIf="totalAmount <= 0">{{(totalAmount) |number:'1.1-2'}}€</h5>
+                        </div>
+                        <p *ngIf="quantityIssue == true" style="color: red">{{"StockIssueCart"|translate}}</p>
+                        <p *ngIf="productNotAvailable == true" style="color: red">{{"productNotAvailable"|translate}}
+                        </p>
+                        <button nz-button nzBlock nzType="primary"
+                            *ngIf="totalAmount != 0 && quantityIssue == false && productNotAvailable == false && payMethod == 'CARD'"
+                            (click)="placeshowModal()" [disabled]="isDisable">{{"Paynow"|translate}}</button>
+                        <button nz-button nzBlock class="paypal-button" [disabled]="isDisable"
+                            *ngIf="totalAmount != 0 && quantityIssue == false && productNotAvailable == false && payMethod == 'PAYPAL'"
+                            (click)="paynow()"><img src="../../../assets//images/paypal.png" height="40"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <app-footer></app-footer> -->
+<!-- Modal -- Add Address (start) -->
+<nz-modal [(nzVisible)]="addisVisible" nzTitle="{{'AddNewAdd'|translate}}" (nzOnCancel)="addhandleCancel()"
+    (nzOnOk)="addhandleOk()" [nzFooter]="null">
+    <form nz-form [formGroup]="addvalidateForm" class="login-form" (ngSubmit)="addsubmitForm()">
+        <h5 class="mb-3">{{"ContactDetail"|translate}}</h5>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="nameErrorTpl">
+                <input type="text" nzSize="large" nz-input formControlName="name" placeholder="{{'Name'|translate}}" />
+                <ng-template #nameErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterName"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('minlength')">
+                        {{"UserNamePattern"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="mobileErrorTpl">
+                <input type="tel" name="mobile" id="mobile" placeholder="{{'Contactnumber'|translate}}" nz-input
+                    formControlName="mobileNumber" />
+                <ng-template #mobileErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('pattern')">
+                        {{"MobileValid"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterMobile"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="altermobileErrorTpl">
+                <input type="tel" name="almobile" id="almobile" placeholder="{{'AlternateContactnumber'|translate}}"
+                    nz-input formControlName="alternatemobile" />
+                <ng-template #altermobileErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('pattern')">
+                        {{"MobileValid"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <h5>{{"Address"|translate}}</h5>
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{'enterpincode' | translate}}!">
+                <input type="number" nzSize="large" nz-input formControlName="pincode"
+                    placeholder="{{'Pincode'|translate}}" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="addErrorTpl">
+                <input type="text" nzSize="large" nz-input formControlName="address"
+                    placeholder="{{'AddressPlace'|translate}}" />
+                <ng-template #addErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterAddress"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('maxlength')">
+                        {{"AddressLength"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="localErrorTpl">
+                <input type="text" nzSize="large" nz-input formControlName="locality"
+                    placeholder="{{'LocalityOrTown'|translate}}" />
+                <ng-template #localErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterLocality"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('maxlength')">
+                        {{"LocalityLength"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="cityError">
+                <input type="text" nzSize="large" nz-input formControlName="city"
+                    placeholder="{{'CityOrDistrict'|translate}}" />
+                <ng-template #cityError let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterCity/Dist"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('maxlength')">
+                        {{"CityLength"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="stateError">
+                <input type="text" nzSize="large" nz-input formControlName="state"
+                    placeholder="{{'State'|translate}}" />
+                <ng-template #stateError let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterState"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('maxlength')">
+                        {{"StateLength"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control>
+                <input type="text" nzSize="large" formControlName="landmark" nz-input
+                    placeholder="{{'Example'|translate}}" />
+            </nz-form-control>
+        </nz-form-item>
+        <h5>{{"SaveAddAs"|translate}}</h5>
+        <nz-form-item>
+            <nz-form-control>
+                <input type="text" nzSize="large" formControlName="address_type" nz-input
+                    placeholder="{{'Example'|translate}}" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <label nz-checkbox formControlName="defaultAddress"><span>{{"MakeDefAddress"|translate}}</span></label>
+        </nz-form-item>
+        <div class="mt-3 pt-1">
+            <button nz-button nzBlock nzType="primary" nzSize="large">{{"AddAddress"|translate}}</button>
+        </div>
+    </form>
+</nz-modal>
+<!-- Modal -- Add Address (end) -->
+<!-- Modal -- Edit Address (start) -->
+<nz-modal [(nzVisible)]="editisVisible" nzTitle="{{'EditAddress'|translate}}" (nzOnCancel)="edithandleCancel()"
+    (nzOnOk)="edithandleOk()" [nzFooter]="null">
+    <form nz-form [formGroup]="editvalidateForm" class="login-form" (ngSubmit)="editsubmitForm()">
+        <h5 class="mb-3">{{"ContactDetail"|translate}}</h5>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="nameErrorTpl">
+                <input type="text" nzSize="large" nz-input formControlName="name" [(ngModel)]="name"
+                    placeholder="{{'Name'|translate}}" />
+                <ng-template #nameErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('minlength')">
+                        {{"UserNamePattern"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterName"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('pattern')">
+                        {{"UserNameValid"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="mobileErrorTpl">
+                <input type="number" nzSize="large" nz-input [(ngModel)]="mobilenumber" formControlName="mobileNumber"
+                    placeholder="{{'EnterMobile'|translate}}" />
+                <ng-template #mobileErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('pattern')">
+                        {{"MobileValid"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterMobile"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="altemobileErrorTpl">
+                <input type="tel" name="altermobile" id="altermobile" [(ngModel)]="alternatemobile" nz-input
+                    formControlName="alternatemobile" />
+                <ng-template #altemobileErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('pattern')">
+                        {{"InvalidNumber"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <h5>{{"Address"|translate}}</h5>
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{'enterpincode' | translate}}!">
+                <input type="number" nzSize="large" nz-input [(ngModel)]="pincode" formControlName="pincode"
+                    placeholder="{{'Pincode'|translate}}" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="addErrorTpl">
+                <input type="text" nzSize="large" [(ngModel)]="address" nz-input formControlName="address"
+                    placeholder="{{'Address1'|translate}}" />
+                <ng-template #addErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterAddress"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('maxlength')">
+                        {{"AddressLength"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="localErrorTpl">
+                <input type="text" nzSize="large" nz-input [(ngModel)]="locality" formControlName="locality"
+                    placeholder="{{'LocalityOrTown'|translate}}" />
+                <ng-template #localErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterLocality"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('maxlength')">
+                        {{"LocalityLength"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="cityError">
+                <input type="text" nzSize="large" nz-input [(ngModel)]="city" formControlName="city"
+                    placeholder="{{'CityOrDistrict'|translate}}" />
+                <ng-template #cityError let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterCity/Dist"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('maxlength')">
+                        {{"CityLength"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzErrorTip]="stateError">
+                <input type="text" nzSize="large" nz-input [(ngModel)]="state" formControlName="state"
+                    placeholder="{{'State'|translate}}" />
+                <ng-template #stateError let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterState"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('maxlength')">
+                        {{"StateLength"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control>
+                <input type="text" nzSize="large" [(ngModel)]="landmark" formControlName="landmark" nz-input
+                    placeholder="{{'Address1'|translate}}" />
+            </nz-form-control>
+        </nz-form-item>
+        <h5>{{"SaveAddAs"|translate}}</h5>
+        <nz-form-item>
+            <nz-form-control>
+                <input type="text" nzSize="large" [(ngModel)]="address_type" formControlName="address_type" nz-input
+                    placeholder="{{'Example'|translate}}" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <label nz-checkbox formControlName="defaultAddress"
+                [(ngModel)]="defaultAddress"><span>{{"MakeDefAddress"|translate}}</span></label>
+        </nz-form-item>
+        <div class="mt-3 pt-1">
+            <button nz-button nzBlock nzType="primary" nzSize="large">{{"EditAddress"|translate}}</button>
+        </div>
+    </form>
+</nz-modal>
+<!-- Modal -- Edit Address (end) -->
+<!-- Modal -- Add Card (start) -->
+<nz-modal [(nzVisible)]="addCardVisible" nzTitle="{{'AddCard'|translate}}" (nzOnCancel)="addCardhandleCancel()"
+    (nzOnOk)="addCardhandleOk()" [nzFooter]="null">
+    <form nz-form [formGroup]="addcardvalidateForm" class="addcard-form" (ngSubmit)="addcardsubmitForm()">
+        <nz-form-item>
+            <nz-form-label nzFor="cardHolderName">{{"CardHolderName"|translate}}</nz-form-label>
+            <nz-form-control [nzErrorTip]="cardErrorTpl">
+                <input type="text" nzSize="large" nz-input formControlName="cardHolderName"
+                    placeholder="Eg: John Doe" />
+                <ng-template #cardErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('minlength') || control.hasError('maxlength')">
+                        {{"UserNamePattern"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterName"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="control.hasError('pattern')">
+                        {{"UserNameValid"|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzFor="card">{{"CardNumber"|translate}}</nz-form-label>
+            <nz-form-control [nzErrorTip]="CardErr">
+                <input nz-input name="card" id="number" type="text" pattern="\d*" formControlName="cardNumber">
+                <ng-template #CardErr let-control>
+                    <ng-container *ngIf="control.hasError('required')">
+                        {{"EnterCardNumber"|translate}}
+                    </ng-container>
+                    <ng-container *ngIf="
+                    control.hasError('pattern')
+                ">
+                        {{'InvalidCardNumber'|translate}}
+                    </ng-container>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <div nz-row [nzGutter]="32">
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="8">
+                <nz-form-item>
+                    <nz-form-label nzFor="month">{{"ExpiryMonth"|translate}}</nz-form-label>
+                    <nz-form-control [nzErrorTip]="MonthErrorTpl">
+                        <input nz-input name="month" id="month" type="number" formControlName="month">
+                        <ng-template #MonthErrorTpl let-control>
+                            <ng-container *ngIf="control.hasError('required')">
+                                {{"EnterMonth"|translate}}
+                            </ng-container>
+                            <ng-container *ngIf="control.hasError('min')">
+                                {{"MonthValid"|translate}}
+                            </ng-container>
+                            <ng-container *ngIf="control.hasError('max')">
+                                {{"MonthValid"|translate}}
+                            </ng-container>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="8">
+                <nz-form-item>
+                    <nz-form-label nzFor="year">{{"ExpiryYear"|translate}}</nz-form-label>
+                    <nz-form-control [nzErrorTip]="YearErrorTpl">
+                        <input nz-input name="year" id="year" min={{minyear}} max="{{maxyear}}" type="number"
+                            formControlName="year">
+                        <ng-template #YearErrorTpl let-control>
+                            <ng-container *ngIf="control.hasError('required')">
+                                {{"EnterYear"|translate}}
+                            </ng-container>
+                            <ng-container *ngIf="control.hasError('min') || control.hasError('max')">
+                                {{"YearValid"|translate}}
+                            </ng-container>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col nzXs="24" nzSm="24" nzMd="12" nzLg="12" nzXl="8">
+                <nz-form-item>
+                    <nz-form-label nzFor="cvc">{{"CVV"|translate}}</nz-form-label>
+                    <nz-form-control [nzErrorTip]="CvcErrorTpl">
+                        <input nz-input name="cvc" id="cvc" type="password" pattern="\d*" formControlName="cvv">
+                        <ng-template #CvcErrorTpl let-control>
+                            <ng-container *ngIf="control.hasError('required')">
+                                {{"EnterCardNumber"|translate}}
+                            </ng-container>
+                            <ng-container *ngIf="control.hasError('minlength')">
+                                {{"CvvMin"|translate}}
+                            </ng-container>
+                            <ng-container *ngIf="control.hasError('maxlength')">
+                                {{"CvvMaz"|translate}}
+                            </ng-container>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+    </form>
+    <div class="mt-3 pt-1">
+        <button nz-button nzBlock nzType="primary" [disabled]="addcardvalidateForm.invalid" nzSize="large"
+            (click)="addcardsubmitForm()">{{"AddCard"|translate}}</button>
+
+    </div>
+</nz-modal>
+<!-- Modal -- Edit Address (end) -->
+<!---Modal -- place order-->
+<nz-modal [(nzVisible)]="placeorder" nzTitle="{{'ConfirmDetails'|translate}}" (nzOnCancel)="placeOder()"
+    (nzOnOk)="placeOrderOk()" [nzFooter]="null">
+    <div class="price-details">
+        <!-- <h3>{{"ConfirmDetails"|translate}}</h3> -->
+        <!-- <h4>{{"Address"|translate}}</h4> -->
+        <div class="mb-3">
+            <h3>{{"YourAddress"|translate}}</h3>
+            <div>{{selectAddress}}</div>
+            <div>{{selectLocality}}</div>
+            <div>{{selectCity}}</div>
+            <div>{{selectState}}</div>
+            <div>{{selectPincode}}</div>
+        </div>
+        <h4>{{"PriceDetail"|translate}}</h4>
+        <div class="mb-3">
+            <div class="product-content-list display-flex">
+                <p class="w-70">{{"BagTotal"|translate}} ({{cartList.length}} items)</p>
+                <p>{{totalAmount |number:'1.1-2'}}€</p>
+            </div>
+            <div class="product-content-list display-flex" *ngIf="totalAmount > 0">
+                <p class="w-70">{{"DeliveryCharge"|translate}}</p>
+                <p *ngIf="delivery_fee != 0">{{delivery_fee}}€</p>
+                <p *ngIf="delivery_fee == 0">{{"FREE"|translate}}€</p>
+            </div>
+            <div class="product-content-list display-flex" *ngIf="couponapplied">
+                <p class="w-70">{{"CouponApplied"|translate}}</p>
+                <p>- {{coupon_discount}}€</p>
+            </div>
+        </div>
+        <div class="sub-total display-flex mb-3">
+            <h5 class="w-70">{{'TotalPayable'|translate}}</h5>
+            <h5 *ngIf="totalAmount > 0">{{(totalAmount+delivery_fee-coupon_discount)|number:'1.1-2'}}€</h5>
+            <h5 *ngIf="totalAmount <= 0">{{(totalAmount) |number:'1.1-2'}}€</h5>
+        </div>
+        <div class="text-center">
+            <button nz-button nzSize="large" (click)="placeOder()" class="mr-3">{{"Cancel"|translate}}</button>
+            <button nz-button nzSize="large" nzType="primary" (click)="paynow()"
+                [disabled]="disablePay">{{"Paynow"|translate}}</button>
+        </div>
+    </div>
+</nz-modal>

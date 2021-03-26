@@ -1,0 +1,24 @@
+<div class="login-page">
+    <div class="container">
+        <div class="logo">
+            <a href="index.html"><img src="./../../assets/style/css/images/banner-background/logo.png" alt="" /></a>
+        </div>
+        <div class="box">
+            <img src="assets/style/css/images/banner-background/background.jpeg" alt="Picture by Autumn Studio"
+                class="box__image">
+            <form nz-form [formGroup]="validateForm" class="form form--login auth-form">
+                <h1 class="text-center mb-3">{{"ResendVerify"|translate}}</h1>
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="{{'inputvalidemail' | translate}}!">
+                        <nz-form-label nzFor="email">{{"Email"|translate}}</nz-form-label>
+                        <input type="text" nz-input formControlName="email" placeholder="Email" />
+                    </nz-form-control>
+                </nz-form-item>
+                <button nz-button class="login-form-button login-form-margin" nzSize="large" [nzType]="'primary'"
+                    nzBlock (click)="submitForm()">{{"Submit"|translate}}</button>
+                <div class="mt-3">{{"AlreadyAccount"|translate}}&nbsp;<a routerLink="/auth/login">{{"Login"|translate}}</a></div>
+                <div class="mt-1">{{"HaveAccount"|translate}}&nbsp;<a routerLink="/auth/signup">{{"SignUp"|translate}}</a></div>
+            </form>
+        </div>
+    </div>
+</div>

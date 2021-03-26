@@ -1,0 +1,81 @@
+<app-header #myChild></app-header>
+<div class="main-container mb-0 col2-right-layout main-wrapper" >
+    <div class="container mission-section">
+        <div class="row">
+            <div class="title-box-default">
+                <a href="#" class="prev-new-arrival"><i class="fa fa-arrow-circle-left"></i></a>
+                <span class="title-tab">{{contentData?.mission_title}}</span>
+                <a href="#" class="next-new-arrival"><i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <div class="row who display-flex">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="abt-left">
+                    <img src="assets/style/css/images/about-us/our mission.png">
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="abt-right">
+                    <h4 class="title-tab">{{contentData?.mission_subtitle}}</h4>
+                    <p class="para-tab just">{{contentData?.mission_desc}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="choose-us custom-services">
+        <div class="container">
+            <!-- End Category Leading -->
+            <div class="row goals display-flex">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="abt-right">
+                        <h4 class="title-tab">{{"InstaFeed"|translate}}</h4>
+                        <p class="para-tab just">{{"OurGoalDesc"|translate}}</p>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="abt-left instagram-iframe text-center">
+                        <iframe width="400" height="560" src="http://instagram.com/p/CGo8Xqkl9VK/embed" frameborder="0">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+            <!-- End Custom Services -->
+        </div>
+    </div>
+    <!-- End Custom Services -->
+    <div class="custom-services pb-10">
+        <div class="container">
+            <div class="row">
+                <div class="title-box-default">
+                    <h2><span class="title-tab">{{contentData?.custom_title}}</span></h2>
+                </div>
+            </div>
+            <div class="row" id="custom_service">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="item-service-box about-content">
+                        <a class="item-service-link"><img src="assets/style/css/images/home_11/diamond.png"
+                                alt="" /></a>
+                        <h3>{{contentData?.old_hand}}</h3>
+                        <p>{{contentData?.oldhand_desc}} </p>
+                    </div>
+                </div>
+                <!-- <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="item-service-box about-content">
+                        <a href="#" class="item-service-link"><img src="assets/style/css/images/home_11/location.png"
+                                alt="" /></a>
+                        <h3>{{"DiverseLocation"|translate}}</h3>
+                        <p>{{"DiverseLocationDesc"|translate}}</p>
+                    </div>
+                </div> -->
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="item-service-box about-content">
+                        <a class="item-service-link"><img src="assets/style/css/images/home_11/icon_pen.png"
+                                alt="" /></a>
+                        <h3>{{contentData?.convenient_platform}} </h3>
+                        <p>{{contentData?.convenient_platform_desc}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+<app-header #myChild></app-header>
+
+<div class="cart main-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7 col-md-6 col-sm-12 col-xs-12">
+                <div class="cart-details">
+                    <div class="cart-title display-flex">
+                        <!-- <h4>My Shopping Cart ({{orderDetils.product?.length}} Items)</h4> -->
+                        <h4>{{"Total"|translate}}: {{orderDetils.amount-orderDetils.delivery_fee}}€</h4>
+                    </div>
+                    <div class="cart-list p-3 b-t" *ngFor="let product of orderDetils.product;let i = index">
+                        <div class="row pb-2">
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                <div class="cart-image" routerLink="/product/{{product.product_id._id}}">
+                                    <img [src]="url+product.product_id.file[0].path" alt="">
+                                </div>
+                            </div>
+                            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                                <div class="cart-name">
+                                    <h4>{{product.product_id.name}}</h4>
+                                    <h6>{{product.quantity}} {{"QTY"|translate}}</h6>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                <div class="cart-amount">
+                                    <h4>{{product.available_price}}€</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12">
+                <div class="price-details">
+                    <h4>{{"PriceDetail"|translate}}</h4>
+                    <div class="p-3 b-t">
+                        <div class="product-content-list display-flex">
+                            <p class="w-70 pl-1">{{"BagTotal"|translate}} ({{orderDetils.product.length}} items)</p>
+                            <p>{{orderDetils.amount-orderDetils.delivery_fee}}€</p>
+                        </div>
+                        <div class="product-content-list display-flex">
+                            <p class="w-70 pl-1">{{"DeliveryCharge"|translate}}</p>
+                            <p>{{orderDetils.delivery_fee}}€</p>
+                        </div>
+                        <div class="product-content-list display-flex" *ngIf="orderDetils.coupon_offer > 0">
+                            <p class="w-70 pl-1">{{"Couponoffer"|translate}}</p>
+                            <p>- {{orderDetils.coupon_offer |number:'1.1-2' }}€</p>
+                        </div>
+                        <div class="sub-total display-flex">
+                            <h5 class="w-70 pl-1">{{"TotalPayable"|translate}}</h5>
+                            <h5>{{orderDetils.amount_paid |number:'1.1-2' }}€</h5>
+                        </div>
+
+                        <div class="product-content-list display-flex">
+                            <p class="w-70 pl-1">{{"OrderStat"|translate}}</p>
+                            <p>
+                                <nz-tag nzColor="success" *ngIf="orderDetils.order_status == 'DELIVERED'">
+                                    {{orderDetils.order_status}}</nz-tag>
+                                <nz-tag nzColor="processing" *ngIf="orderDetils.order_status == 'SHIPPED'">
+                                    {{orderDetils.order_status}}</nz-tag>
+                                <nz-tag nzColor="error" *ngIf="orderDetils.order_status == 'RETURNED'">
+                                    {{orderDetils.order_status}}</nz-tag>
+                                <nz-tag nzColor="warning"
+                                    *ngIf="orderDetils.order_status == 'ORDERED' || orderDetils.order_status == 'PACKED'">
+                                    {{orderDetils.order_status}}</nz-tag>
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-7 col-md-6 col-sm-12 colxs-12">
+                <div class="price-details">
+                    <h4>{{"AddressDetails"|translate}}</h4>
+                    <div class="p-3 b-t">
+                        <h3>{{"Address"|translate}}</h3>
+                        <div>{{address.address}}</div>
+                        <div>{{address.locality}}</div>
+                        <div>{{address.city}}</div>
+                        <div>{{address.state}}</div>
+                        <div>{{address.pincode}}</div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

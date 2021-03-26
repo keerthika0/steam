@@ -1,0 +1,75 @@
+<div class="landing-wrapper">
+    <app-landing-header></app-landing-header>
+</div>
+<div class="main-container main-wrapper">
+    <div class="container">
+        <div class="title-box-default">
+            <span class="title-tab">SOLICITUD DE DEVOLUCIÓN</span>
+        </div>
+        <div class="privacy-section mb-20">
+            <div nz-row nzJustify="center">
+                <div nz-col nzXs="24" nzSm="16" nzMd="12" nzLg="10" nzXl="10">
+                    <form nz-form [formGroup]="validateForm" class="return-form" (ngSubmit)="returnFormSubmit()"
+                        [nzLayout]="'vertical'">
+
+                        <nz-form-item>
+                            <nz-form-label>Tipo de devolución (*)</nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor, input tipo de devolución !">
+                                <input type="text" nz-input nzSize="large" formControlName="type" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label>Nombre del comprador (*)</nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor, input dirección del comprador!">
+                                <input type="text" nz-input nzSize="large" formControlName="name" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label>Dirección del comprador (*)</nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor, input dirección del comprador!">
+                                <input type="text" nz-input nzSize="large" formControlName="address" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label>Email (con el que se hizo el pedido) (*)</nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor, input email!">
+                                <input type="email" nz-input nzSize="large" formControlName="email" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label>Referencia del pedido (*)</nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor, input referencia del pedido!">
+                                <input type="text" nz-input nzSize="large" formControlName="reference" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label>Motivo de la devolución</nz-form-label>
+                            <nz-form-control nzErrorTip="Por favor, input motivo de la devolución!">
+                                <input type="text" nz-input nzSize="large" formControlName="reason" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label>Imagen producto</nz-form-label>
+                            <input accept=".jpg,.jpeg,.png" display="inline" tabindex="0" type="file"
+                                class="post-file--img" (change)="onFileChange($event)" />
+
+                            <!--  <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                [nzHeaders]="{ authorization: 'authorization-text' }" (nzChange)="handleChange($event)">
+                                <button nz-button><i nz-icon nzType="upload"></i>Click to Upload</button>
+                            </nz-upload> -->
+                        </nz-form-item>
+                        <nz-form-item>
+                            <label nz-checkbox formControlName="acceptTerms">
+                                <span>Mediante el envío de mis datos personales confirmo que he leído y acepto la
+                                    política de privacidad </span>
+                            </label>
+                        </nz-form-item>
+                        <button nz-button [nzType]="'primary'" nzSize="large" nzBlock
+                            (click)="submitForm()">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-landing-footer></app-landing-footer>

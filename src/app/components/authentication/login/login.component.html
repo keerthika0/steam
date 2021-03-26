@@ -1,0 +1,37 @@
+<div class="login-page">
+    <div class="container">
+        <div class="logo">
+            <a href="index.html"><img src="./../../assets/style/css/images/banner-background/logo.png" alt="" /></a>
+        </div>
+        <div class="box">
+            <img src="assets/style/css/images/banner-background/background.jpeg" alt="Picture by Autumn Studio"
+                class="box__image">
+            <form nz-form [formGroup]="validateForm" class="form form--login auth-form" (ngSubmit)="Login()">
+                <h1 class="text-center mb-3">{{"Login" | translate}}</h1>
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="{{'EnterEmail'|translate}}!">
+                        <nz-form-label nzFor="email">{{"Email"|translate}}</nz-form-label>
+                        <input type="email" nz-input formControlName="email" placeholder="Email" />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="{{'EnterPassword'|translate}}!">
+                        <nz-form-label nzFor="password">{{"Password"|translate}}</nz-form-label>
+                        <input type="password" nz-input formControlName="password"
+                            placeholder="{{'Password'|translate}}" />
+                    </nz-form-control>
+                </nz-form-item>
+                <div nz-row class="login-form-margin mb-3">
+                    <div nz-col [nzSpan]="12">
+                        <a routerLink="/auth/forgot" class="login-form-forgot">{{"ForgotPassword"|translate}}</a>
+                    </div>
+                </div>
+                <button nz-button class="login-form-button login-form-margin" nzSize="large" [nzLoading]="isLoading"
+                    [nzType]="'primary'" nzBlock>{{"Login"|translate}}</button>
+                <div class="mt-2">
+                    {{"HaveAccount"|translate}}&nbsp;<a routerLink="/auth/signup">{{"SignUp"|translate}}</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

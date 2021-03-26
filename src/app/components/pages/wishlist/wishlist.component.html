@@ -1,0 +1,32 @@
+<app-header #myChild></app-header>
+  
+<div class="wishlist main-wrapper">
+    <div class="container">
+        <div class="row pb-10">
+            <div *ngIf="wishList.length == 0" class="text-center">
+                {{"NoItemWish"|translate}}
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-6 mob-width" style="margin-top:3%" *ngFor="let wish of wishList">
+                <div class="wishlist-card">
+                    <a (click)="wishDelete(wish._id)" class="wishlist-remove">×</a>
+                    <div class="wishlist-image">
+                        <img [src]="url+wish.file[0].path" *ngIf="wish.file.length > 0" routerLink="/product/{{wish._id}}">
+                        <img src="../../../../assets/images/notavailable.jpg" *ngIf="!wish.file.length > 0" routerLink="/product/{{wish._id}}">
+                    </div>
+                    <div class="wishlist-content">
+                        <p>{{wish.name}}</p>
+                        <div class="wishlist-price">
+                            <h4>{{wish.available_price[0] |number:'1.1-2'}}€</h4>
+                            <h6 *ngIf="wish.offer_percentage != 0">{{wish.price[0] |number:'1.1-2' }}€</h6>
+                            <h5 *ngIf="wish.offer_percentage != 0">({{wish.offer_percentage}}% {{'OFF'|translate}})</h5>
+                        </div>
+                    </div>
+                    <div class="wishlist-add">
+                        <button nz-button nzType="primary" (click)="addCart(wish)">{{"AddtoCart"|translate}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

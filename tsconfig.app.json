@@ -13,3 +13,6 @@
     "src/**/*.d.ts"
   ]
 }
+"extend"
+"data"
+"mongo"
